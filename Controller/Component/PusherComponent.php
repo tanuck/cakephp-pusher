@@ -74,11 +74,60 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * Trigger a pusher app event.
  *
- *
- *
+ * @param string|array $channels
+ * @param string $event
+ * @param mixed $data
+ * @param string $socketId
+ * @return bool
  */
-	public function trigger() {
+	public function trigger($channels, $event, $data, $socketId = null) {
+		return $this->_pusher->trigger($channels, $event, $data, $socketId);
+	}
 
+/**
+ *
+ *
+ * @param string $channel
+ * @param string $socketId
+ * @return string
+ */
+	public function socketAuth($channel, $socketId) {
+		return $this->_pusher->socket_auth($channel, $socketId);
+	}
+
+/**
+ *
+ *
+ * @param string $channel
+ * @param string $socketId
+ * @param string $userId
+ * @param bool $userInfo
+ * @return string
+ */
+	public function presenceAuth($channel, $socketId, $userId, $userInfo = false) {
+		return $this->_pusher->presence_auth($channel, $socketId, $userId, $userInfo);
+	}
+
+/**
+ *
+ *
+ * @param string $path
+ * @param array $params
+ * @return array
+ */
+	public function get($path, $params = array()) {
+		return $this->_pusher->get($path, $params);
+	}
+
+/**
+ * Accessor to the original object so that functionality not yet implemented
+ * by the Component can be accessed.
+ *
+ * @return Pusher
+ */
+	public function instance() {
+		return $this->_pusher;
 	}
 }

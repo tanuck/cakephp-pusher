@@ -18,19 +18,20 @@ install:
   - git clone git://github.com/cakephp/cakephp ../cake && cd ../cake && git checkout 2.7
   - cp -R ../cakephp-pusher app/Plugin/CakePusher
   - cd app
-  - sh -c "composer require 'phpunit/phpunit=3.7.33'"
+  - sh -c "if [ '$PHPCS' != '1' ]; then composer require 'phpunit/phpunit=3.7.33'; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then composer require 'pusher/pusher-php-server=~2.0'; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then composer require 'cakephp/cakephp-codesniffer=1.x'; fi"
 
 before_script:
   - if [ "$PHPCS" != 1 ]; then
             echo "
-                require_once APP . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'PHPUnit' . DS . 'Autoload.php';
+                require_once APP . DS . 'vendor' . DS . 'autoload.php';
             " >> ./Config/bootstrap.php;
     fi
 
 script:
   - sh -c "if [ '$PHPCS' != '1' ]; then ./Console/cake test CakePusher Controller/Component/PusherComponent; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then Vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./Plugin/CakePusher/Controller ./Plugin/CakePusher/Test; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./Plugin/CakePusher/Controller ./Plugin/CakePusher/Test; fi"
 
 notifications:
   email: false
