@@ -6,10 +6,10 @@
  * For the full copyright and license information, please view the
  * LICENSE.txt file included with this source code.
  *
- * @copyright		Copyright (c) James Tancock <tanuck@gmail.com>
- * @package			CakePusher.Controller.Component
- * @since			2.0
- * @license 		http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright	Copyright (c) James Tancock <tanuck@gmail.com>
+ * @package		CakePusher.Controller.Component
+ * @since		2.0
+ * @license		http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Component', 'Controller');
@@ -76,10 +76,10 @@ class PusherComponent extends Component {
 /**
  * Trigger a pusher app event.
  *
- * @param string|array $channels
- * @param string $event
- * @param mixed $data
- * @param string $socketId
+ * @param string|array $channels The channel or channels to send the event to.
+ * @param string $event Event name.
+ * @param mixed $data Event data.
+ * @param string $socketId The client socket ID.
  * @return bool
  */
 	public function trigger($channels, $event, $data, $socketId = null) {
@@ -87,10 +87,10 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * Create a socket auth signature.
  *
- *
- * @param string $channel
- * @param string $socketId
+ * @param string $channel The channel name.
+ * @param string $socketId The socket ID.
  * @return string
  */
 	public function socketAuth($channel, $socketId) {
@@ -98,12 +98,12 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * Create a presence signature.
  *
- *
- * @param string $channel
- * @param string $socketId
- * @param string $userId
- * @param bool $userInfo
+ * @param string $channel The channel name.
+ * @param string $socketId The socket ID.
+ * @param string $userId The user ID.
+ * @param bool $userInfo The user information.
  * @return string
  */
 	public function presenceAuth($channel, $socketId, $userId, $userInfo = false) {
@@ -111,10 +111,10 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * Get a REST resource at a given path.
  *
- *
- * @param string $path
- * @param array $params
+ * @param string $path The url path.
+ * @param array $params API parameters.
  * @return array
  */
 	public function get($path, $params = array()) {

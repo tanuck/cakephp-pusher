@@ -6,10 +6,10 @@
  * For the full copyright and license information, please view the
  * LICENSE.txt file included with this source code.
  *
- * @copyright		Copyright (c) James Tancock <tanuck@gmail.com>
- * @package			CakePusher.Test.Case.Controller.Component
- * @since			2.0
- * @license 		http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright	Copyright (c) James Tancock <tanuck@gmail.com>
+ * @package		CakePusher.Test.Case.Controller.Component
+ * @since		2.0
+ * @license		http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('PusherComponent', 'CakePusher.Controller/Component');
