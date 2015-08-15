@@ -30,7 +30,7 @@ before_script:
     fi
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./Console/cake test CakePusher Controller/Component/PusherComponent; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then ./Console/cake test CakePusher AllTests; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./Plugin/CakePusher/Controller ./Plugin/CakePusher/Test; fi"
 
 notifications:
