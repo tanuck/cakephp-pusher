@@ -37,11 +37,37 @@ class PusherComponent extends Component {
 	);
 
 /**
+ * Maps Cake CS style methods to the original object.
+ *
+ * @var array
+ */
+	protected $_methodMaps = array(
+		'trigger' => 'trigger',
+		'socketAuth' => 'socket_auth',
+		'presenceAuth' => 'presence_auth',
+		'get' => 'get',
+	);
+
+/**
  * The Pusher api instance.
  *
  * @var Pusher
  */
-	protected $_pusher;
+	protected $_pusherApps = [];
+
+/**
+ * The default app name.
+ *
+ * @var string
+ */
+	protected $_default = 'main';
+
+/**
+ * The pusher app currently in use.
+ *
+ * @var string
+ */
+	protected $_current = null;
 
 /**
  * Constructor
@@ -52,7 +78,19 @@ class PusherComponent extends Component {
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
-		$this->settings = array_merge($this->_defaultConfig, $this->settings);
+
+		if (!array_key_exists($this->_default, $settings)) {
+			$settings[$this->_default] = $settings;
+		}
+
+		$this->settings = array();
+		foreach ($settings as $app => &$config) {
+			if (!is_array($config)) {
+				unset($settings[$app]);
+			} else {
+				$this->settings[$app] = array_merge($this->_defaultConfig, $config);
+			}
+		}
 	}
 
 /**
@@ -62,72 +100,101 @@ class PusherComponent extends Component {
  * @return void
  */
 	public function initialize(Controller $controller) {
-		$this->_pusher = new Pusher(
-			$this->settings['auth_key'],
-			$this->settings['secret'],
-			$this->settings['app_id'],
-			$this->settings['options'],
-			$this->settings['host'],
-			$this->settings['port'],
-			$this->settings['timeout']
-		);
+		foreach ($this->settings as $app => $config) {
+			$this->_pusherApps[$app] = $this->_getInstance($config);
+		}
 	}
 
 /**
- * Trigger a pusher app event.
  *
- * @param string|array $channels The channel or channels to send the event to.
- * @param string $event Event name.
- * @param mixed $data Event data.
- * @param string $socketId The client socket ID.
- * @return bool
+ *
+ * @param string $name
+ * @param array $arguments
+ * @throws InternalErrorException
+ * @return mixed
  */
-	public function trigger($channels, $event, $data, $socketId = null) {
-		return $this->_pusher->trigger($channels, $event, $data, $socketId);
+	public function __call($name, $arguments) {
+		if (!array_key_exists($name, $this->_methodMaps)) {
+			throw new InternalErrorException('Invalid pusher method.');
+		}
+
+		$app = ($this->_current === null) ? $this->_default : $this->_current;
+		$this->_current = null;
+
+		return call_user_func_array(array($this->_pusherApps[$app], $this->_methodMaps[$name]), $arguments);
 	}
 
 /**
- * Create a socket auth signature.
+ * Get the default app name.
  *
- * @param string $channel The channel name.
- * @param string $socketId The socket ID.
  * @return string
  */
-	public function socketAuth($channel, $socketId) {
-		return $this->_pusher->socket_auth($channel, $socketId);
+	public function getDefault() {
+		return $this->_default;
 	}
 
 /**
- * Create a presence signature.
+ * Set the default app name.
  *
- * @param string $channel The channel name.
- * @param string $socketId The socket ID.
- * @param string $userId The user ID.
- * @param bool $userInfo The user information.
- * @return string
+ * @param string $newDefault The new default app name.
  */
-	public function presenceAuth($channel, $socketId, $userId, $userInfo = false) {
-		return $this->_pusher->presence_auth($channel, $socketId, $userId, $userInfo);
+	public function setDefault($newDefault) {
+		if (!is_string($newDefault) || !array_key_exists($newDefault, $this->_pusherApps)) {
+			return false;
+		}
+
+		return (bool)$this->_default = $newDefault;
 	}
 
 /**
- * Get a REST resource at a given path.
+ * Retrieve
  *
- * @param string $path The url path.
- * @param array $params API parameters.
- * @return array
- */
-	public function get($path, $params = array()) {
-		return $this->_pusher->get($path, $params);
-	}
-
-/**
- * Accessor to the original object so that functionality not yet implemented
- * by the Component can be accessed.
- *
+ * @param string $appName The name of the pusher app to use.
+ * @throws CakeException
  * @return Pusher
  */
-	public function instance() {
-		return $this->_pusher;
+	public function with($appName = null) {
+		if (!is_string($appName)) {
+			$appName = &$this->_default;
+		}
+
+		if (!array_key_exists($appName, $this->_pusherApps)) {
+			throw new CakeException('Missing Pusher app instance.');
+		}
+
+		$this->_current = $appName;
+
+		return $this;
+	}
+
+/**
+ *
+ *
+ * @param string $name
+ * @param array $config
+ * @return bool
+ */
+	public function addAppConfig($name, $config) {
+		$this->settings[$name] = array_merge($this->_defaultConfig, $config);
+
+		return (bool)$this->_pusherApps[$name] = $this->_getInstance($this->settings[$name]);
+	}
+
+/**
+ *
+ *
+ * @param array $config
+ * @return Pusher
+ */
+	protected function _getInstance(array $config) {
+		return new Pusher(
+			$config['auth_key'],
+			$config['secret'],
+			$config['app_id'],
+			$config['options'],
+			$config['host'],
+			$config['port'],
+			$config['timeout']
+		);
 	}
 }
