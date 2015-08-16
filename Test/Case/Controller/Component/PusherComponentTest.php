@@ -31,7 +31,7 @@ class TestPusherComponent extends PusherComponent {
  * @var Pusher
  * @codingStandardsIgnoreStart
  */
-	public $_pusherApps = [];
+	public $_pusherApps = array();
 
 	public $_current = null;
 // @codingStandardsIgnoreEnd

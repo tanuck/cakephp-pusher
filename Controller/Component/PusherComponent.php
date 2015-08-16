@@ -53,7 +53,7 @@ class PusherComponent extends Component {
  *
  * @var Pusher
  */
-	protected $_pusherApps = [];
+	protected $_pusherApps = array();
 
 /**
  * The default app name.
