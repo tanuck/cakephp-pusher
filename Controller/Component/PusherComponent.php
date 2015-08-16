@@ -106,10 +106,12 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * All interaction with the Pusher objects happens here.
  *
+ * Triggers Pusher methods mapped from Cake CS style methods.
  *
- * @param string $name
- * @param array $arguments
+ * @param string $name The method name.
+ * @param array $arguments The method parameters.
  * @throws InternalErrorException
  * @return mixed
  */
@@ -137,6 +139,7 @@ class PusherComponent extends Component {
  * Set the default app name.
  *
  * @param string $newDefault The new default app name.
+ * @return bool
  */
 	public function setDefault($newDefault) {
 		if (!is_string($newDefault) || !array_key_exists($newDefault, $this->_pusherApps)) {
@@ -168,10 +171,10 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * App a new app configuration and instantiate a new Pusher object.
  *
- *
- * @param string $name
- * @param array $config
+ * @param string $name Name of the app.
+ * @param array $config The app configuration.
  * @return bool
  */
 	public function addAppConfig($name, $config) {
@@ -181,9 +184,9 @@ class PusherComponent extends Component {
 	}
 
 /**
+ * Instansiate a new Pusher object for a given configuration.
  *
- *
- * @param array $config
+ * @param array $config The Pusher configuration.
  * @return Pusher
  */
 	protected function _getInstance(array $config) {
