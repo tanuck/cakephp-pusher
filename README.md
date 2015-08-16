@@ -13,7 +13,7 @@ Include the following in your composer.json file:
 ```
 {
 	"require": {
-		"tanuck/pusher": "dev-master"
+		"tanuck/pusher": "~2.0"
 	}
 }
 ```
